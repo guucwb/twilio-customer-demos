@@ -1,4 +1,21 @@
-# CarePlus | Portal do Beneficiário
+# Twilio Customer Demos
+
+Workspace com demos locais de Twilio para CarePlus, Boti, Aché e BetMGM. Cada demo tem sua própria experiência, configuração e roteiro de apresentação.
+
+## Demos disponíveis
+
+| Demo | Experiência | Código | Documentação |
+| --- | --- | --- | --- |
+| CarePlus | Portal do Beneficiário com autenticação Twilio Verify | `apps/web` + `apps/api` | [Configuração e roteiro abaixo](#careplus--portal-do-beneficiário) |
+| Boti | Experience Hub de atendimento e CX | `apps/boti` | [README Boti](apps/boti/README.md) |
+| Aché | Communication Hub com jornada multicanal | `apps/ache` | [README Aché](apps/ache/README.md) |
+| BetMGM | Player Care dentro do Twilio Flex + fallback offline | `apps/betmgm` | [README BetMGM e roteiro](apps/betmgm/README.md), [validação](apps/betmgm/docs/validation.md) |
+
+Consulte o README de cada demo antes de iniciar. Os comandos `npm run dev` na raiz iniciam **CarePlus**; eles não iniciam todas as demos. BetMGM tem instalação e comandos próprios para o plugin Flex e o fallback.
+
+Credenciais, arquivos `.env`, configuração local do Flex, dependências e builds não estão versionados. Em outra máquina, instale as dependências, configure seu ambiente usando os exemplos disponíveis e gere os builds conforme a documentação da demo. Os fluxos sintéticos e as integrações reais estão identificados nos respectivos READMEs.
+
+## CarePlus | Portal do Beneficiário
 
 Demo local de autenticação com **Twilio Verify**, interface em português e dados de beneficiário inteiramente fictícios. O número de celular informado para receber OTP é real; ele não é usado para preencher o cadastro fictício.
 
