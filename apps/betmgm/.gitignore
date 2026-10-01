@@ -1,0 +1,8 @@
+node_modules/
+dist/
+plugin-betmgm/build/
+*.log
+.env*
+
+# Local integrity snapshot (includes hashes of local configuration)
+baseline.json

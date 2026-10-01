@@ -1,0 +1,30 @@
+{
+  "name": "@betmgm/player-care",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "start": "node scripts/serve.mjs",
+    "lint": "eslint shared fallback scripts *.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --config vitest.config.ts",
+    "build": "tsc --noEmit && vite build",
+    "plugin:start": "cd plugin-betmgm && BROWSER=none twilio flex:plugins:start --profile GusFlex --port 3004 --include-remote",
+    "plugin:build": "cd plugin-betmgm && twilio flex:plugins:build",
+    "plugin:lint": "cd plugin-betmgm && ../../../node_modules/.bin/eslint src webpack.config.js webpack.dev.js eslint.config.cjs",
+    "plugin:typecheck": "cd plugin-betmgm && ./node_modules/.bin/tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "lucide-react": "^0.468.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.0.4",
+    "vite": "^7.1.12",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.11"
+  }
+}

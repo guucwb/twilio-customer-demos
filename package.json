@@ -1,0 +1,27 @@
+{
+  "name": "careplus-verify-demo",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n api,web \"npm run dev -w apps/api\" \"npm run dev -w apps/web\"",
+    "lint": "eslint .",
+    "typecheck": "npm run typecheck --workspaces",
+    "test": "vitest run",
+    "build": "npm run build --workspaces",
+    "discover": "npm run discover -w apps/api",
+    "smoke": "node scripts/smoke.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.0",
+    "@types/node": "^22.19.0",
+    "concurrently": "^9.2.0",
+    "eslint": "^9.39.0",
+    "globals": "^16.5.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.0",
+    "vitest": "^4.1.11"
+  }
+}
