@@ -1,0 +1,93 @@
+{
+  "workflowApiVersion": "1.1",
+  "metaData": {
+    "icon": "https://YOUR_ACTIVITY_HOST/activity/icon.svg",
+    "category": "message",
+    "isConfigured": false,
+    "configOnDrop": true
+  },
+  "type": "Rest",
+  "lang": {
+    "pt-BR": {
+      "name": "Twilio WhatsApp",
+      "description": "Camada de comunicação WhatsApp — validação necessária no tenant"
+    },
+    "en-US": {
+      "name": "Twilio WhatsApp",
+      "description": "WhatsApp communication activity"
+    }
+  },
+  "arguments": {
+    "execute": {
+      "url": "https://YOUR_ACTIVITY_HOST/api/activity/execute",
+      "useJwt": true,
+      "inArguments": [],
+      "outArguments": [
+        {
+          "executionMode": ""
+        },
+        {
+          "providerStatus": ""
+        }
+      ],
+      "timeout": 20000,
+      "retryCount": 0,
+      "retryDelay": 1000,
+      "concurrentRequests": 1
+    }
+  },
+  "configurationArguments": {
+    "applicationExtensionKey": "REPLACE_WITH_INSTALLED_PACKAGE_COMPONENT_KEY",
+    "save": {
+      "url": "https://YOUR_ACTIVITY_HOST/api/activity/save",
+      "useJwt": true
+    },
+    "validate": {
+      "url": "https://YOUR_ACTIVITY_HOST/api/activity/validate",
+      "useJwt": true
+    },
+    "publish": {
+      "url": "https://YOUR_ACTIVITY_HOST/api/activity/publish",
+      "useJwt": true
+    },
+    "unpublish": {
+      "url": "https://YOUR_ACTIVITY_HOST/api/activity/unpublish",
+      "useJwt": true
+    },
+    "stop": {
+      "url": "https://YOUR_ACTIVITY_HOST/api/activity/stop",
+      "useJwt": true
+    }
+  },
+  "userInterfaces": {
+    "configModal": {
+      "url": "https://YOUR_ACTIVITY_HOST/activity/index.html",
+      "height": 780,
+      "width": 900,
+      "fullscreen": false
+    }
+  },
+  "schema": {
+    "arguments": {
+      "execute": {
+        "inArguments": [],
+        "outArguments": [
+          {
+            "executionMode": {
+              "dataType": "Text",
+              "direction": "out",
+              "access": "visible"
+            }
+          },
+          {
+            "providerStatus": {
+              "dataType": "Text",
+              "direction": "out",
+              "access": "visible"
+            }
+          }
+        ]
+      }
+    }
+  }
+}
