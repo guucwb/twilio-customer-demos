@@ -1,29 +1,46 @@
-# Recuperação da versão funcional Globo
+# Recuperação segura da Glô
 
-Snapshot criado em 13/10/2026 antes desta auditoria:
+Recuperação de código, seleção de cenário e recuperação de execução são operações diferentes. Este guia substitui instruções antigas de restaurar automaticamente a variante Rafael. Nada foi restaurado ou reiniciado neste handover.
 
-`apps/globo/.demo-data/recovery/globo-functional-20261013.tar.gz`
+## Estado que deve ser preservado
 
-Manifest e checksums: `apps/globo/.demo-data/recovery/manifest.json`.
+- Cenário preservado, seus recursos nativos, pedidos, ledgers e resultados da apresentação.
+- Cenários anteriores, sem apagar perfis/Conversations ou alterar seus pedidos para repetir o roteiro.
+- Credenciais globais/locais, configurações ngrok e perfis CLI, separados dos backups de código.
+- Arquivos privados em `.demo-data/recovery/`, manifests e sidecars `.sha256` existentes.
 
-O arquivo foi extraído em diretório separado, 53 checksums de arquivos passaram e 48/48 testes Globo passaram na cópia restaurada. O teste usou as dependências já instaladas; não comprova uma instalação limpa ou disponibilidade futura do registry npm. Este ponto de recuperação é local e ignorado pelo Git. Não substitui backup externo do MacBook.
+Identificar os processos existentes antes de uma operação autorizada. Este guia não afirma o estado atual dos serviços e não autoriza encerrá-los.
 
-Conteúdo: código e build Globo, `.env.example` público, package manifests/lock e configuração de testes do workspace. Excluídos: segredos, `.env.local`, senha do painel, memória/transcrições de runtime, `node_modules` e histórico Git. O `.env` existente da raiz permanece no local original, fora do pacote.
+## Recuperação preferida: seletor, sem restauração de dados
 
-## Procedimento
-
-1. Encerrar apenas o backend Globo, após confirmar que a porta 3007 pertence ao processo Globo. Preservar os outros projetos e túneis.
-2. Extrair o arquivo em diretório separado e verificar checksums do manifest.
-3. Fazer backup da pasta Globo atual e restaurar `apps/globo` a partir da cópia verificada. Os arquivos de credenciais existentes permanecem separados.
-4. Usar os manifests do snapshot para conferir versões. Restaurar o lockfile somente após verificar compatibilidade com os demais workspaces; a auditoria não alterou dependências ou código executável.
-5. Reaplicar os overrides públicos a partir de `.env.example`, mantendo a voz `5p4THmLc2S6kXKO1pOM5-1.06_0.5_0.8`. Manter autorização de chamadas desligada.
-6. Executar os testes Globo e build; iniciar o backend e abrir o painel local. A recuperação sem dados de runtime inicia Rafael com 10 dias. Conferir política fictícia e fontes antes de usar ngrok.
-7. Validar o túnel com `npm run verify:tunnel -w apps/globo`. Uma ligação adicional exige autorização específica, como antes.
+Somente com autorização e serviço nativo ocioso, selecionar um cenário anterior preparado:
 
 ```sh
-npm run test -w apps/globo
-npm run build -w apps/globo
-npm run start -w apps/globo
+node apps/globo/scripts/scenario.mjs activate gustavo-cenario-existente
 ```
 
-Para contingência de rede/modelo: iniciar com `GLOBO_AI_ENABLED=false`; o roteiro local é identificado na interface. Recuperação de runtime é separada da recuperação de código: “Nova sessão” retém memória; preparar 10 dias exige parar o backend e mover o arquivo de memória fictícia para um backup com nome único antes de reiniciar.
+Recarregar apenas o serviço nativo autorizado com `npm run start:native -w apps/globo`, depois conferir conta, perfil, configuração, pedido/versão e preflight. Gateway/ngrok não devem ser encerrados ou reconfigurados se houver outros consumidores. O comando não apaga recursos remotos.
+
+Retorno à variante Rafael é outra experiência: `node apps/globo/scripts/scenario.mjs rafael`, seguido de recarga nativa autorizada. Não apresentá-la como Memory RH nativo de Gustavo. Não ativar o oficial para um novo ensaio: preparar outro cenário com nome exclusivo.
+
+## Restaurar código/build
+
+1. Identificar o ponto de recuperação correto; snapshots antigos da variante RH não são equivalentes ao código nativo atual.
+2. Verificar checksum do arquivo e, quando disponível, manifest de arquivos. Extrair em pasta nova e privada, nunca diretamente sobre a aplicação ou sobre o cenário oficial.
+3. Inspecionar os membros do arquivo. Alguns snapshots guardam source/build; outros contêm evidências/cenários privados. Não publicar arquivos restaurados nem confundir evidências com credenciais de setup.
+4. Fazer backup do código atual e obter autorização para a troca. Preservar `.env`, `.env.local`, `.demo-data` e outras aplicações. Não substituir o lockfile global indiscriminadamente.
+5. Validar a cópia restaurada com testes locais mockados e build. Só então recarregar o serviço alvo autorizado e executar preflight.
+
+O ponto local anterior à preparação oficial contém a versão aprovada e os cenários anteriores. Os arquivos de recuperação mais antigos têm escopos e vozes históricas diferentes. Não copiar parâmetros antigos por cima das vozes atualmente aprovadas. Credenciais precisam continuar provisionadas separadamente.
+
+## Falha de processamento ou estado divergente
+
+Não repetir automaticamente STT, TTS, envio incerto, ingestão ou criação do pedido. Conferir Message SID, Communication, chave de idempotência, versão do executor e referência Memory antes de qualquer recuperação pontual. Preservar ledger e falha originais; nunca fabricar uma confirmação de sucesso.
+
+Código atual de consulta de Intelligence pode recuperar resultados existentes por GET. Resultado com citação inválida permanece separado, não é reprocessado em massa para “passar” no validador. Uma nova análise precisa de autorização e revisão do input real.
+
+## Contingência de apresentação
+
+Se rede/provedor falhar, apresentar arquitetura e evidências anteriores datadas, indicando sua origem. A variante antiga com roteiro local pode servir como outra experiência explicitamente simulada, não como substituta silenciosa de Memory/Orchestrator/Intelligence nativos. Não editar o oficial, importar um fixture como insight ou prometer que o modelo voltou apenas porque respondeu HTTP 200.
+
+Checksums comprovam integridade do arquivo comparado, não confidencialidade, disponibilidade remota ou restauração completa em outro Mac. Os backups locais devem ter uma política privada de cópia/retencão; não são enviados ao GitHub.
