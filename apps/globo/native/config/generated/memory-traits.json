@@ -1,0 +1,10 @@
+{
+  "displayName": "GloboOperations",
+  "description": "Referências operacionais fictícias, sem estado de execução ou RH.",
+  "traits": {
+    "referencesJson": {
+      "dataType": "STRING",
+      "description": "Referências de pedidos fictícios, sem informações RH."
+    }
+  }
+}

@@ -1,0 +1,31 @@
+// Keeps the approved account/HR app at its original routes; native account is
+// isolated behind /globo/native and /api/globo/native. No tunnel reconfiguration.
+import {createServer} from 'node:http';
+import {readFileSync} from 'node:fs';
+import dotenv from 'dotenv';
+import {appRoot} from './config';
+import {voiceConfig} from './voice';
+import {LocalDemoMemory} from './memory';
+import {MockNimoServiceNow} from './nimo';
+import {OpenAIResponses} from './openai';
+import {HRSession} from './agent';
+import {createApp} from './app';
+import {attachRelay,RelayRegistry} from './relay';
+import {nativeRoute,forwardNative,upgradeNative} from './native-router';
+const root=dotenv.parse(readFileSync(new URL('../../../.env',import.meta.url)));
+const local=dotenv.parse(readFileSync(appRoot+'.env.local'));
+const defaults=dotenv.parse(readFileSync(appRoot+'.env.example'));
+const voice=voiceConfig({...defaults,...root,...Object.fromEntries(Object.entries(local).filter(([k])=>/^GLOBO_(TTS|STT)_/.test(k)))});
+if(root.EXPECTED_TWILIO_ACCOUNT_SID&&root.TWILIO_ACCOUNT_SID!==root.EXPECTED_TWILIO_ACCOUNT_SID)throw new Error('recovery-account-mismatch');
+const config={voice,accountSid:root.TWILIO_ACCOUNT_SID,authToken:root.TWILIO_AUTH_TOKEN,publicBase:local.GLOBO_PUBLIC_URL||'https://gustsantos.ngrok.io',panelPassword:readFileSync(appRoot+'.demo-data/panel-password.txt','utf8').trim(),allowedCalls:(root.GLOBO_ALLOWED_CALL_SIDS??'').split(',').filter(x=>/^CA[0-9a-f]{32}$/i.test(x)),approvedTestCall:root.GLOBO_TEST_CALL_APPROVED==='true'&&root.TWILIO_VOICE_NUMBER&&root.DEMO_CUSTOMER_VOICE_PHONE?{from:root.TWILIO_VOICE_NUMBER,to:root.DEMO_CUSTOMER_VOICE_PHONE}:undefined};
+if(!config.accountSid||!config.authToken)throw new Error('recovery-config-missing');
+const memory=new LocalDemoMemory(appRoot+'.demo-data/rafael.json');
+const provider=root.OPENAI_API_KEY&&root.OPENAI_MODEL?new OpenAIResponses({apiKey:root.OPENAI_API_KEY,model:root.OPENAI_MODEL}):undefined;
+const factory=async(mode:'demo'|'voice'='demo')=>new HRSession(memory,new MockNimoServiceNow(),provider,mode).init();
+let session=await factory();const registry=new RelayRegistry(()=>factory('voice'));
+const app=createApp({...config,session,registry,getSession:()=>session,createSession:()=>factory(),setSession:s=>{session=s;},staticDir:appRoot+'dist'});
+const relayServer=createServer();const wss=attachRelay(relayServer,{...config,ttsLanguage:voice.ttsLanguage,registry,onSession:s=>{session=s;}});
+const server=createServer((req,res)=>nativeRoute(req.url??'')?forwardNative(req,res):app(req,res));
+server.on('upgrade',(req,socket,head)=>nativeRoute(req.url??'')?upgradeNative(req,socket,head):relayServer.emit('upgrade',req,socket,head));
+const port=Number(process.env.GLOBO_GATEWAY_PORT??3007);server.listen(port,'127.0.0.1',()=>console.info(`Globo coexistence gateway: ${port}; original routes preserved, native routes separate.`));
+for(const signal of ['SIGINT','SIGTERM'] as const)process.on(signal,()=>{session.finish();for(const ws of wss.clients)ws.close(1001);wss.close();server.close();});

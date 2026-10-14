@@ -1,0 +1,20 @@
+import fs from 'node:fs';
+import dotenv from 'dotenv';
+const root=new URL('../',import.meta.url),e=dotenv.parse(fs.readFileSync(new URL('.env.local',root)));
+const path=new URL('.demo-data/target-resources.json',root),ledger=JSON.parse(fs.readFileSync(path));
+const snapshot=JSON.parse(fs.readFileSync(new URL('.demo-data/selected-sender-snapshot.json',root)));
+const target=e.EXPECTED_TWILIO_ACCOUNT_SID,sender='XEc496946458a3be652864221c06287f19';
+if(!/^AC[0-9a-f]{32}$/i.test(target??'')||e.TWILIO_ACCOUNT_SID!==target||e.EXPECTED_TWILIO_ACCOUNT_SID!==target||snapshot.targetAccount!==target||snapshot.sender.sid!==sender||snapshot.sender.address!=='whatsapp:+554123911383')throw new Error('scope-mismatch');
+const auth='Basic '+Buffer.from(target+':'+e.TWILIO_AUTH_TOKEN).toString('base64');
+const url='https://messaging.twilio.com/v2/Channels/Senders/'+sender;
+async function request(method,body){const r=await fetch(url,{method,headers:{Authorization:auth,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined,redirect:'error',signal:AbortSignal.timeout(15000)});const b=await r.json();ledger.evidence.push({method,endpoint:url,at:new Date().toISOString(),http:r.status,errorCode:r.ok?undefined:b.code});fs.writeFileSync(path,JSON.stringify(ledger,null,2),{mode:0o600});if(!r.ok)throw new Error('sender-api-'+r.status);return b;}
+const before=await request('GET');
+const rollback=process.argv[2]==='rollback';const next=rollback?snapshot.sender.voiceApplicationSid:ledger.twimlApplicationSid;
+if(!next)throw new Error('binding-target-missing');
+if(before.configuration?.voice_application_sid!==snapshot.sender.voiceApplicationSid&&before.configuration?.voice_application_sid!==ledger.twimlApplicationSid)throw new Error('binding-changed-by-other-actor');
+if(before.configuration.voice_application_sid!==next)await request('POST',{configuration:{voice_application_sid:next}});
+const after=await request('GET');
+if(after.configuration?.voice_application_sid!==next)throw new Error('binding-verification-pending');
+if(JSON.stringify(before.webhook)!==JSON.stringify(after.webhook))throw new Error('unexpected-messaging-webhook-change');
+ledger.senderBinding={senderSid:sender,voiceApplicationSid:next,oldVoiceApplicationSid:snapshot.sender.voiceApplicationSid,verifiedAt:new Date().toISOString(),state:rollback?'ROLLED_BACK':'APPLIED',status:after.status};fs.writeFileSync(path,JSON.stringify(ledger,null,2),{mode:0o600});
+console.log(JSON.stringify(ledger.senderBinding));

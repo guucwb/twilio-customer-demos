@@ -1,0 +1,237 @@
+{
+  "state": "PARTIALLY_APPLIED_WITH_NATIVE_EVIDENCE",
+  "targetAccount": "<EXPECTED_TWILIO_ACCOUNT_SID>",
+  "application": "apps/globo",
+  "voice": "5p4THmLc2S6kXKO1pOM5-1.06_0.5_0.8",
+  "remoteApproved": true,
+  "gates": [
+    "User confirms ONE exclusively dedicated sender",
+    "Correct target Auth Token configured locally; no root credential fallback",
+    "User verifies Meta portfolio/business verification and Calling button",
+    "User personally handles any missing AI/ML Addendum acceptance",
+    "Public route dependencies resolved before any process change"
+  ],
+  "senderCandidates": [
+    {
+      "sid": "XEc496946458a3be652864221c06287f19",
+      "oldVoiceApplication": "AP44e69a3ee2609eb3fc146a78f7c2d0b7",
+      "consumer": "Calllink",
+      "dedicationConfirmed": false
+    },
+    {
+      "sid": "XEfc78c07d45e18389ca05331de0c8a539",
+      "oldVoiceApplication": "AP827c03a7f02e95b2990d6a766362b27a",
+      "consumer": "TwiML Bin shared with OFFLINE sender",
+      "dedicationConfirmed": false
+    }
+  ],
+  "newResources": [
+    {
+      "type": "TwiML Application",
+      "quantity": 1,
+      "voiceUrl": "https://gustsantos.ngrok.io/globo/voice"
+    },
+    {
+      "type": "Memory Store",
+      "quantity": 1,
+      "domain": "fictional-operations-only"
+    },
+    {
+      "type": "TraitGroup",
+      "quantity": 1,
+      "name": "GloboOperationsDemo",
+      "traits": {
+        "referencesJson": {
+          "dataType": "STRING"
+        }
+      }
+    },
+    {
+      "type": "Intelligence v3 operator",
+      "quantity": 3,
+      "definition": "operators.proposed.json"
+    },
+    {
+      "type": "Intelligence v3 configuration",
+      "quantity": 1,
+      "definition": "intelligence.proposed.json"
+    },
+    {
+      "type": "Orchestrator configuration",
+      "quantity": 1,
+      "definition": "orchestrator.proposed.json",
+      "passiveVoiceCapture": false
+    },
+    {
+      "type": "Batch Transcription configuration",
+      "quantity": 1,
+      "conditional": true,
+      "definition": "batch-transcription.proposed.json",
+      "gate": "truthful single-speaker channel mapping and dedicated messaging routing reviewed first"
+    }
+  ],
+  "existingResourceDelta": {
+    "resource": "ONE expressly selected dedicated sender",
+    "field": "configuration.voice_application_sid",
+    "value": "NEW_GLOBO_TWIML_APP",
+    "rollback": "Restore exact previous voice_application_sid; never alter/delete shared old App"
+  },
+  "excluded": [
+    "global .env",
+    "CLI default profile",
+    "other applications",
+    "existing TwiML Apps",
+    "existing Voice number webhooks",
+    "Messaging Service/pool changes without a further concrete routing delta",
+    "WABA transfers",
+    "new numbers",
+    "Classic intelligenceService",
+    "legal acceptance by agent"
+  ],
+  "runtimeDelta": [
+    "Atomic app-scoped credentials and authenticated account ownership check",
+    "Account/domain-scoped fixtures, caches and MessageSid ledger",
+    "Signed inbound WhatsApp exact From/To + CallSid admission; retain WSS signature and nonce checks",
+    "Relay conversationConfiguration OR validated existing conversationId, never both",
+    "Native Memory Recall before second-session answer; no concealed local fallback",
+    "Reuse operational modules incrementally, preserve existing HR agent and approved voice",
+    "Native v3 execution IDs and exact communication evidence; ServiceNow remains mock",
+    "Audio uses native batch ingestion if compatible; no accidental CreateCommunication send"
+  ],
+  "testLimitsProposed": {
+    "userInitiatedInboundCalls": 2,
+    "maxSecondsPerCall": 120,
+    "outboundCalls": 0,
+    "maxVoiceNotes": 2,
+    "maxSecondsPerVoiceNote": 60,
+    "maxRecallRequests": 4,
+    "maxOperatorExecutions": 6,
+    "maxInputCharactersPerOperator": 10000,
+    "estimatedOutputCharactersPerOperator": 2000,
+    "maxIngestedCharacters": 20000,
+    "estimatedMemoryGenerationCharacters": 20000,
+    "hardBillingCapGuaranteed": false,
+    "approved": true
+  },
+  "rollback": [
+    "Restore selected sender Voice App binding",
+    "Disable only dedicated capture and jobs",
+    "Restore old local configuration/process after preserving unrelated routes",
+    "Remove only newly created resources after reference checks",
+    "Charges already incurred cannot be reversed; handle synthetic-data deletion deliberately"
+  ],
+  "authorization": {
+    "sender": "whatsapp:+554123911383",
+    "targetAccount": "<EXPECTED_TWILIO_ACCOUNT_SID>",
+    "developmentIntegrationTestingConsumptionApproved": true,
+    "priorUSD5CapRemoved": true,
+    "otherResourcesMustRemainUnchanged": true
+  },
+  "audio": {
+    "twilioBatch": "BLOCKED_BY_AUTO_REVIEW_SINGLE_SPEAKER_MAPPING",
+    "resourceCreated": false,
+    "alternative": "OpenAI file STT plus explicitly validated native ingestion; awaiting user approval"
+  },
+  "incrementalVoiceNotes": {
+    "status": "REAL_DYNAMIC_AUDIO_DELIVERED_HUMAN_PLAYBACK_CONFIRMED",
+    "existingIntegrationsPreserved": [
+      "WhatsApp Calling",
+      "Conversation Relay",
+      "Conversation Memory",
+      "Conversation Orchestrator",
+      "Conversation Intelligence v3"
+    ],
+    "incomingSTT": "OpenAI file transcription; single speaker",
+    "outgoingTTS": "ElevenLabs direct API; approved voice only",
+    "outgoingVoiceEnvironment": "GLOBO_AUDIO_TTS_*",
+    "credentialsRequiredLocally": [],
+    "callingVoiceUnchanged": true,
+    "oggOpusConversionTested": true,
+    "signedMediaPublicGetHTTP": 200,
+    "signedMediaPublicHeadHTTP": 200,
+    "tamperedSignatureHTTP": 404,
+    "dynamicAudioWhatsAppPlaybackValidated": true,
+    "newOutgoingAudioMessageSids": [
+      "MM34bb0ba700b39921549cb0f722b00928",
+      "MMcfb661bb0222294c488ee04792c476fd",
+      "MMbf84d42110be2c97100f46a7255a190c"
+    ],
+    "localNativeTestsPassed": 111,
+    "preservedTestsPassed": 51,
+    "documentation": "apps/globo/VOICE-NOTES.md",
+    "nimoServiceNow": "explicitly simulated",
+    "callingConfigurationUnchanged": true,
+    "ttsModel": "eleven_v4",
+    "ttsSettings": {
+      "stability": 0.35,
+      "similarity": 0.85,
+      "audioTags": false,
+      "speedAndStyle": "omitted for v4; preserved locally for v2 rollback"
+    },
+    "synthesisBlock": {
+      "resolved": true,
+      "previousHttp": 402,
+      "previousCode": "payment_required",
+      "resolution": "User activated existing ElevenLabs Starter plan; real synthesis succeeded"
+    },
+    "evidence": "dynamic-voice-notes-proof.json",
+    "tests": {
+      "native": 142,
+      "preserved": 51
+    },
+    "sampleMessageSid": "MM8345c3420c841039f370197393016574",
+    "sampleDelivery": "delivered",
+    "sampleDurationMs": 14078,
+    "sampleSynthesisMs": 3768,
+    "humanSamplePlaybackConfirmed": true,
+    "nativeConversationIds": [
+      "conv_conversation_01m4vys9b3f9mtdpm6296ctwvf",
+      "conv_conversation_01m4vz28vkeywvxcg9kmeza8mh"
+    ],
+    "requestId": "EQ-DEMO-1002",
+    "requestVersion": 3,
+    "nativeTextIngestionVerified": true,
+    "normalEndToEndMs": [
+      25515,
+      20683
+    ],
+    "confirmationEndToEndMs": 494933,
+    "confirmationRecovery": "Authenticated REST; genuine original text; before native input/execution; preserves failure audit",
+    "nativeIntelligenceResultsVerified": 10,
+    "nativeCommunicationsVerified": 7,
+    "nativeMemoryRecallVerified": {
+      "observations": 5,
+      "summaries": 2,
+      "communications": 3
+    },
+    "humanPlaybackConfirmation": "Sim, apareceram e tocaram normalmente",
+    "replayVerified": {
+      "http": 200,
+      "ledgerUnchanged": true,
+      "newOutboundMessages": 0,
+      "origin": "controlled signed replay of genuine prior incoming SID"
+    },
+    "v4LiveValidation": "DELIVERED_HUMAN_PLAYBACK_CONFIRMED",
+    "v4Approval": "Aprovar B — v4 sem tags",
+    "v4Evidence": "v4-whatsapp-proof.json",
+    "v4AudioMessageSid": "MM6606b2dc844a6d5013a634da1923b074",
+    "v4TotalMs": 27526,
+    "v4TtsCodecPublishMs": 3164,
+    "finalThreeVoiceJourney": "APPROVED_STUDIO_INTERPRETATION_FIX",
+    "studioNormalizationFix": {
+      "status": "three real voice messages completed",
+      "sameRequestId": "EQ-DEMO-1002",
+      "versionBefore": 3,
+      "versionAfter": 4,
+      "locationAfter": 5,
+      "draftLocationChange": "4 to 5",
+      "persistedLocationChange": "5 to 5; row was already 5 before this test",
+      "nativeCurrentObservationStudio5Verified": true,
+      "nativeCommunicationsVerified": 7,
+      "no409": true,
+      "noManualRecovery": true,
+      "frozenTtsAndCallingAndBackups": true,
+      "evidence": "studio-fix-proof.json"
+    }
+  }
+}

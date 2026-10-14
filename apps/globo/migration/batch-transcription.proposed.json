@@ -1,0 +1,20 @@
+{
+  "state":"REVIEW_ONLY_NOT_EXECUTABLE",
+  "gate":"Confirm supported, truthful channel mapping for a single-speaker WhatsApp note; no invented agent speech",
+  "requestCandidate": {
+    "unique_name":"globo_operations_demo_ptbr",
+    "description":"Dedicated synthetic operations demo",
+    "configuration": {
+      "configurationType":"Transcription",
+      "transcriptionEngine":"deepgram",
+      "speechModel":"nova-2",
+      "language":"pt-BR",
+      "conversationConfigurationId":"REPLACE_DEDICATED_ORCHESTRATOR_ID",
+      "transcriptionStatusCallback":{"url":"https://REPLACE_APPROVED_HOST/globo/transcription/events","method":"POST"},
+      "participantDefaults":[{"audioChannelIndex":1,"type":"CUSTOMER"},{"audioChannelIndex":2,"type":"AI_AGENT"}]
+    }
+  },
+  "mediaGate":"Documented external formats: stereo PCM WAV/MP3/FLAC. OGG conversion and secure short-lived mediaUrl needed.",
+  "correlation":"Local account+MessageSid+MediaSid -> returned transcription jobId and conversationId; no invented metadata parameter",
+  "source":"https://www.twilio.com/docs/configurations/transcription-configuration-resource"
+}

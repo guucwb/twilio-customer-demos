@@ -1,6 +1,6 @@
 # Twilio Customer Demos
 
-Workspace com demos locais de Twilio para CarePlus, Boti, Aché, BetMGM e VR Benefícios. Cada demo tem sua própria experiência, configuração e roteiro de apresentação.
+Workspace com demos locais de Twilio para CarePlus, Boti, Aché, BetMGM, VR Benefícios e Globo RH. Cada demo tem sua própria experiência, configuração e roteiro de apresentação.
 
 ## Demos disponíveis
 
@@ -12,6 +12,7 @@ Workspace com demos locais de Twilio para CarePlus, Boti, Aché, BetMGM e VR Ben
 | BetMGM | Player Care dentro do Twilio Flex + fallback offline | `apps/betmgm` | [README BetMGM e roteiro](apps/betmgm/README.md), [validação](apps/betmgm/docs/validation.md) |
 | Obramax | Conversation Intelligence complementar ao bot atual, determinística e offline | `apps/obramax` | [README Obramax e roteiro](apps/obramax/README.md) |
 | VR Benefícios | Jornada comercial WhatsApp-first, determinística e offline | `apps/vr` | [README VR e roteiro de 3 minutos](apps/vr/README.md) |
+| Globo RH | Agente de voz Conversation Relay, jornada fictícia de férias e observabilidade | `apps/globo` | [Setup e roteiro de cinco minutos](apps/globo/README.md), [validação](apps/globo/VALIDATION.md) |
 
 Consulte o README de cada demo antes de iniciar. Os comandos `npm run dev` na raiz iniciam **CarePlus**; eles não iniciam todas as demos. BetMGM tem instalação e comandos próprios para o plugin Flex e o fallback.
 

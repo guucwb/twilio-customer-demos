@@ -1,0 +1,43 @@
+{
+  "displayName": "globo-edx-operations-demo",
+  "description": "Configuração dedicada fictícia. Não capturar tráfego de clientes.",
+  "rules": [
+    {
+      "operators": [
+        {
+          "id": "REPLACE_IMPACT_OPERATOR_ID"
+        }
+      ],
+      "triggers": [],
+      "actions": [
+        {
+          "type": "WEBHOOK",
+          "method": "POST",
+          "url": "https://REPLACE_DEDICATED_HOST/globo/intelligence/events"
+        }
+      ]
+    },
+    {
+      "operators": [
+        {
+          "id": "REPLACE_INTEGRITY_OPERATOR_ID"
+        },
+        {
+          "id": "REPLACE_FRICTION_OPERATOR_ID"
+        }
+      ],
+      "triggers": [
+        {
+          "on": "CONVERSATION_END"
+        }
+      ],
+      "actions": [
+        {
+          "type": "WEBHOOK",
+          "method": "POST",
+          "url": "https://REPLACE_DEDICATED_HOST/globo/intelligence/events"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "displayName": "globo-edx-operations-demo",
+  "description": "Somente produção fictícia; RH não ingressa nesta configuração.",
+  "conversationGroupingType": "GROUP_BY_PROFILE",
+  "memoryStoreId": "REPLACE_DEDICATED_STORE_ID",
+  "memoryExtractionEnabled": true,
+  "intelligenceConfigurationIds": [
+    "REPLACE_DEDICATED_INTELLIGENCE_ID"
+  ],
+  "channelSettings": {
+    "VOICE": {
+      "captureRules": [],
+      "statusTimeouts": null
+    }
+  },
+  "statusCallbacks": []
+}

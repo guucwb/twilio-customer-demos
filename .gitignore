@@ -8,3 +8,5 @@ coverage/
 .DS_Store
 test-results/
 playwright-report/
+# Isolated Globo demo: synthetic persistent state and transient tunnel output
+apps/globo/.demo-data/

@@ -1,0 +1,12 @@
+import {it,expect} from 'vitest';
+import {mkdtemp,rm} from 'node:fs/promises';
+import {join} from 'node:path';
+import {tmpdir} from 'node:os';
+import request from 'supertest';
+import {SignedAudioStore} from './outgoing-media';
+import {createApp} from './app';
+import {HRSession} from './agent';
+import {LocalDemoMemory} from './memory';
+import {MockNimoServiceNow} from './nimo';
+import {RelayRegistry} from './relay';
+it('allows signed media GET/HEAD for Twilio without weakening panel access',async()=>{const dir=await mkdtemp(join(tmpdir(),'glo-media-http-'));try{const base='https://demo.example',media=await new SignedAudioStore({directory:dir,publicBase:base,ttlSeconds:3600}).init();const bytes=Buffer.concat([Buffer.from('OggS'),Buffer.alloc(24),Buffer.from('OpusHead')]);const out=await media.publish(bytes),u=new URL(out.url);const factory=()=>new HRSession(new LocalDemoMemory(),new MockNimoServiceNow()).init();let session=await factory();const app=createApp({outgoingMedia:media,voice:{ttsProvider:'ElevenLabs',ttsLanguage:'pt-BR',voice:'fake',transcriptionProvider:'Google',transcriptionLanguage:'pt-BR',speechModel:'telephony'},authToken:'test',accountSid:'AC'+'0'.repeat(32),publicBase:base,panelPassword:'test',allowedCalls:[],session,registry:new RelayRegistry(factory),getSession:()=>session,createSession:factory,setSession:s=>{session=s;}});const get=await request(app).get(u.pathname+u.search);expect(get.status).toBe(200);expect(get.headers['content-type']).toBe('audio/ogg');expect((await request(app).head(u.pathname+u.search)).status).toBe(200);expect((await request(app).get(u.pathname)).status).toBe(404);expect((await request(app).get('/globo/native/')).status).toBe(401);expect((await request(app).get('/api/globo/native/audio')).status).toBe(401);}finally{await rm(dir,{recursive:true,force:true});}});

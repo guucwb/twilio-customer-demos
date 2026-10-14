@@ -1,0 +1,110 @@
+[
+  {
+    "id": "fixture-analysis-1",
+    "operator": "operational_friction",
+    "conversationId": "synthetic-conversation-1",
+    "time": "2026-10-13T12:00:00-03:00",
+    "source": "non-native-simulation",
+    "communications": [
+      {
+        "id": "synthetic-communication-1",
+        "conversationId": "synthetic-conversation-1",
+        "text": "O kit veio sem o cabo adaptador. Pegamos um cabo emprestado da outra equipe.",
+        "input": "synthetic-demo"
+      }
+    ],
+    "result": {
+      "friction_category": "missing_accessory",
+      "workaround_reported": "Cabo emprestado da outra equipe.",
+      "equipment_reference": "Kit/microfone fictício",
+      "location_reference": null,
+      "improvement_hypothesis": "Investigar checklist de acessórios antes do despacho.",
+      "evidence": [
+        {
+          "quote": "O kit veio sem o cabo adaptador. Pegamos um cabo emprestado da outra equipe."
+        }
+      ]
+    }
+  },
+  {
+    "id": "fixture-analysis-2",
+    "operator": "operational_friction",
+    "conversationId": "synthetic-conversation-2",
+    "time": "2026-10-13T12:00:00-03:00",
+    "source": "non-native-simulation",
+    "communications": [
+      {
+        "id": "synthetic-communication-2",
+        "conversationId": "synthetic-conversation-2",
+        "text": "O microfone voltou a falhar durante a gravação no estúdio 4.",
+        "input": "synthetic-demo"
+      }
+    ],
+    "result": {
+      "friction_category": "repeated_failure",
+      "workaround_reported": null,
+      "equipment_reference": "Kit/microfone fictício",
+      "location_reference": "estúdio 4",
+      "improvement_hypothesis": "Investigar histórico de testes e manutenção do ativo.",
+      "evidence": [
+        {
+          "quote": "O microfone voltou a falhar durante a gravação no estúdio 4."
+        }
+      ]
+    }
+  },
+  {
+    "id": "fixture-analysis-3",
+    "operator": "operational_friction",
+    "conversationId": "synthetic-conversation-3",
+    "time": "2026-10-13T12:00:00-03:00",
+    "source": "non-native-simulation",
+    "communications": [
+      {
+        "id": "synthetic-communication-3",
+        "conversationId": "synthetic-conversation-3",
+        "text": "A equipe informou que não havia kits disponíveis. Adiamos o ensaio.",
+        "input": "synthetic-demo"
+      }
+    ],
+    "result": {
+      "friction_category": "availability",
+      "workaround_reported": null,
+      "equipment_reference": "Kit/microfone fictício",
+      "location_reference": null,
+      "improvement_hypothesis": "Investigar disponibilidade declarada e critérios de empréstimo.",
+      "evidence": [
+        {
+          "quote": "A equipe informou que não havia kits disponíveis. Adiamos o ensaio."
+        }
+      ]
+    }
+  },
+  {
+    "id": "fixture-analysis-4",
+    "operator": "operational_friction",
+    "conversationId": "synthetic-conversation-4",
+    "time": "2026-10-13T12:00:00-03:00",
+    "source": "non-native-simulation",
+    "communications": [
+      {
+        "id": "synthetic-communication-4",
+        "conversationId": "synthetic-conversation-4",
+        "text": "Entregaram, mas veio um kit incompatível. Ainda não conseguimos gravar.",
+        "input": "synthetic-demo"
+      }
+    ],
+    "result": {
+      "friction_category": "compatibility",
+      "workaround_reported": null,
+      "equipment_reference": "Kit/microfone fictício",
+      "location_reference": null,
+      "improvement_hypothesis": "Investigar catálogo e validação de compatibilidade.",
+      "evidence": [
+        {
+          "quote": "Entregaram, mas veio um kit incompatível. Ainda não conseguimos gravar."
+        }
+      ]
+    }
+  }
+]

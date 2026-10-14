@@ -1,0 +1,27 @@
+import { randomUUID } from 'node:crypto';
+import { readFile,writeFile,rename,mkdir } from 'node:fs/promises';
+import { dirname } from 'node:path';
+import type { EquipmentRequest,ExecutionStatus,ToolEvent } from '../shared/operations';
+export interface ExecutionAdapter {
+ readonly source:'adapter-simulated';
+ history(identity:string):Promise<EquipmentRequest[]>;
+ get(identity:string,id:string):Promise<EquipmentRequest>;
+ create(identity:string,draft:Omit<EquipmentRequest,'id'|'version'>,key:string):Promise<EquipmentRequest>;
+ update(identity:string,id:string,change:{location?:number;reportedOutcome?:EquipmentRequest['reportedOutcome'];blocker?:string;reopen?:boolean},version:number,key:string):Promise<EquipmentRequest>;
+}
+// Business contract only. No invented ServiceNow/EDX URL or object mapping.
+export class MockEquipmentExecution implements ExecutionAdapter {
+ readonly source='adapter-simulated' as const;
+ private rows:EquipmentRequest[]=[{id:'EQ-DEMO-0901',owner:'rafael-demo',type:'equipment-service-request',equipment:'kit de microfone sem fio',quantity:1,location:4,compatibility:'DEMO-RX',deadlineText:'Pedido fictício anterior de ontem',status:'completed',version:1,executor:null,eta:null,reportedOutcome:'unknown',recurrenceReported:false}];private keys:Record<string,EquipmentRequest>={};private testEvents:string[]=[];events:ToolEvent[]=[];private sequence=Promise.resolve();
+ constructor(private path?:string){}
+ async init(){if(this.path){try{const s=JSON.parse(await readFile(this.path,'utf8'));this.rows=s.rows;this.keys=s.keys;this.testEvents=s.testEvents;this.events=s.events;}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw new Error('execution-state-invalid');}}return this;}
+ private authorize(identity:string){if(identity!=='rafael-demo')throw new Error('execution-not-authorized');}
+ private async save(){if(!this.path)return;await mkdir(dirname(this.path),{recursive:true,mode:0o700});await writeFile(this.path+'.tmp',JSON.stringify({rows:this.rows,keys:this.keys,testEvents:this.testEvents,events:this.events}),{mode:0o600});await rename(this.path+'.tmp',this.path);}
+ private async serial<T>(fn:()=>Promise<T>){const result=this.sequence.then(async()=>{const before=structuredClone({rows:this.rows,keys:this.keys,testEvents:this.testEvents,events:this.events});try{return await fn();}catch(e){this.rows=before.rows;this.keys=before.keys;this.testEvents=before.testEvents;this.events=before.events;throw e;}});this.sequence=result.then(()=>{},()=>{});return result;}
+ private record(operation:string,row?:EquipmentRequest,detail=''){this.events.push({id:randomUUID(),time:new Date().toISOString(),operation,requestId:row?.id,source:this.source,confirmed:true,detail});}
+ async history(identity:string){await this.sequence;this.authorize(identity);return structuredClone(this.rows);}
+ async get(identity:string,id:string){await this.sequence;this.authorize(identity);const row=this.rows.find(r=>r.id===id&&r.owner===identity);if(!row)throw new Error('request-not-found');this.record('get',row,'Estado consultado no adapter simulado, não em Memory.');return structuredClone(row);}
+ async create(identity:string,draft:Omit<EquipmentRequest,'id'|'version'>,key:string){this.authorize(identity);return this.serial(async()=>{if(this.keys[key])return structuredClone(this.keys[key]);if(draft.owner!==identity||draft.quantity<1||draft.quantity>10||!Number.isInteger(draft.quantity)||![4,5].includes(draft.location)||draft.compatibility!=='DEMO-RX')throw new Error('invalid-equipment-request');const row:EquipmentRequest={...structuredClone(draft),id:`EQ-DEMO-${String(1001+this.rows.length).padStart(4,'0')}`,version:1};this.rows.push(row);this.keys[key]=structuredClone(row);this.record('create',row,'Pedido registrado no mock; estoque, SLA e ETA desconhecidos.');await this.save();return structuredClone(row);});}
+ async update(identity:string,id:string,change:{location?:number;reportedOutcome?:EquipmentRequest['reportedOutcome'];blocker?:string;reopen?:boolean},version:number,key:string){this.authorize(identity);return this.serial(async()=>{if(this.keys[key])return structuredClone(this.keys[key]);const row=this.rows.find(r=>r.id===id&&r.owner===identity);if(!row||row.version!==version)throw new Error('version-conflict');if(change.location!==undefined&&![4,5].includes(change.location))throw new Error('invalid-location');if(change.location!==undefined)row.location=change.location;if(change.reportedOutcome)row.reportedOutcome=change.reportedOutcome;if(change.blocker)row.blocker=change.blocker;if(change.reopen)row.status='registered';row.version++;this.keys[key]=structuredClone(row);this.record('update',row,'Atualização confirmada do mesmo pedido no adapter mock.');await this.save();return structuredClone(row);});}
+ async event(identity:string,id:string,status:ExecutionStatus,eventId:string){this.authorize(identity);return this.serial(async()=>{const row=this.rows.find(r=>r.id===id&&r.owner===identity);if(!row)throw new Error('request-not-found');if(this.testEvents.includes(eventId))return structuredClone(row);const order=['registered','accepted','dispatched','completed'];if(!order.includes(status)||order.indexOf(status)<order.indexOf(row.status))throw new Error('invalid-status-transition');this.testEvents.push(eventId);row.status=status;row.version++;this.record('test-'+status,row,'Evento sintético explícito de execução; não confirma compatibilidade ou mundo físico.');await this.save();return structuredClone(row);});}
+}

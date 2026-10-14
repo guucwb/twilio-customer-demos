@@ -1,0 +1,1 @@
+import {defineConfig} from 'vite';import react from '@vitejs/plugin-react';export default defineConfig({root:new URL('.',import.meta.url).pathname,base:'/globo/native/',plugins:[react()],build:{outDir:'../.demo-data/native-dist',emptyOutDir:true},server:{port:5180,strictPort:true}});
