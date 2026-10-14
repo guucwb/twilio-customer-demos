@@ -1,5 +1,50 @@
 # Globo RH AI Demo
 
+## Preflight operacional para a apresentação
+
+Executar na raiz do workspace:
+
+```sh
+npm run preflight:globo -w apps/globo
+# Saída estruturada, também sem segredos ou payloads:
+npm run preflight:globo -w apps/globo -- --json
+```
+
+O comando verifica gateway 3007, serviço 3010, ngrok existente, painel local/público, autenticação, conta alvo, sender/binding da Voice Application, Orchestrator, Memory, Intelligence v3, credenciais por GET de metadados, modelos/voz/português, parâmetros aprovados, estado do cenário, evidências de execução anteriores e checksums dos backups. Não altera `.env`, perfis CLI, sender, recursos remotos, processos, histórico ou seleção do cenário. Não gera áudio, Recall, inferência, chamadas, mensagens ou execução de operadores.
+
+Cada teste informa categoria, resultado, descrição segura e duração em milissegundos. **CONFIGURAÇÃO** verifica parâmetros/vínculos; **DISPONIBILIDADE** verifica acesso nesta execução; **EXECUÇÃO PRÉVIA** valida os artefatos e recursos persistidos do ensaio anterior. HTTP 200 não comprova uma chamada nova. O script não afirma disponibilidade atual de inferência com base no catálogo dos modelos, nem verifica novamente elegibilidade Meta por uma API que não a expõe; distingue confirmação manual anterior e ensaio real documentado.
+
+| Resultado | Exit code | Significado |
+| --- | ---: | --- |
+| PRONTO | 0 | Requisitos críticos e evidências verificados no escopo de leitura; sem ressalvas detectadas. |
+| ATENÇÃO | 2 | Sistema pode operar, mas há condição a revisar; automação deve tratar separadamente. |
+| BLOQUEADO | 1 | Requisito crítico ausente, incoerente ou indisponível; não iniciar a demo até revisar. |
+
+`npm` imprime sua mensagem de lifecycle quando o exit é diferente de zero, inclusive ATENÇÃO; isso é esperado. A saída JSON do script é segura, mas `npm` adiciona seu cabeçalho; para JSON puro usar `npm run --silent preflight:globo -w apps/globo -- --json`.
+
+Timeout de rede de 8 segundos por GET, conexão local de 2 segundos e codecs de 2,5 segundos. Respostas são limitadas a 4 MiB. Redirecionamentos são rejeitados para evitar encaminhar autorização a outro destino. TLS permanece obrigatório. O wrapper reutiliza somente a CA administrativa existente, com escopo no processo filho, sem mudar certificados globais. Falhas são sanitizadas e nenhuma resposta bruta, telefone do participante, senha ou token aparece no terminal. Backups e origens de memória são lidos, nunca restaurados ou reprocessados. O script não importa o bootstrap/config do servidor para evitar criação de diretórios ou inicialização de integrações.
+
+**Execução autenticada em 14/10:** ATENÇÃO, exit 2, 5,2 segundos; 23 checks PRONTO e 2 ATENÇÃO. Serviços, túnel, controles de acesso (401/200), conta, sender/Voice App, três produtos nativos, modelos/voz, saldo ElevenLabs por metadados, provas reais anteriores e backups conferidos. As ressalvas são: EQ-DEMO-2001 já no estúdio 5 e resultado semântico inadequado de urgência da chamada mista. Nenhum bloqueio crítico permaneceu. 163 testes nativos passaram (incluindo 12 do preflight), assim como o typecheck. Não foi executado teste cobrado de conversa. Não usar o pedido atual para alegar nova mudança 4 → 5; o mecanismo de cenário novo está documentado abaixo e não foi acionado nesta rodada.
+
+### Parecer de participação por QR Code
+
+**NO-GO para participação na apresentação de hoje.** Um QR Code não cria isolamento; a aplicação atual é restrita ao apresentador. Nenhum QR Code, whitelist adicional, endpoint público ou alteração de sender foi implementado.
+
+| Critério | Evidência na aplicação atual | Parecer |
+| --- | --- | --- |
+| Texto livre | WhatsApp aceita `NumMedia=0`/`Body` do remetente autorizado; normalização restringe férias/equipamentos. Não é um assistente geral. `native/server/file-audio.ts:18` e `:52`; `vacation.ts:15`. | Parcial, somente dentro do roteiro. |
+| Outros números | Comparação exata `From`/`To` na mensageria; Calling admite exclusivamente o par autorizado e depois exige CallSid aprovado. `file-audio.ts:19`; `app.ts:42`. | Não suportado. |
+| Perfil/Memory por participante | Um `config.opProfile`, `NativeOperationalMemory`, `NativeVacationMemory` e adapter por processo/cenário. `index.ts:27`, `:29`, `:43`, `:68`. Não há resolução dinâmica autorizada por participante no backend. | Isolamento ausente para audiência. |
+| Concorrência | Notas têm fila global `chain`; cada chamada ganha `HRSession`, mas todas usam o mesmo `journey` e `vacation`; `newSession` limpa draft/confirmação globais. `file-audio.ts:13`; `index.ts:45`; `operations.ts:9`. | Risco de interferência se a allowlist fosse aberta. |
+| Fora do escopo | Calling devolve orientação restrita com resposta-base controlada. Mensageria lança `outside-demo-scope`, registra falha e pode ficar sem resposta, após STT no caso de áudio. `glo-session.ts:30`; `file-audio.ts:49`, `:52`. | Não garante experiência geral nem resposta útil a toda mensagem; não houve teste público. |
+| Abuso e ações | Assinatura Twilio, conta, allowlist, nonce, idempotência, dono/versão e confirmação; limites de mídia/HTTP, 4 sockets, 20 tickets e chamada de 10 minutos. Não há quota por participante, rate limiting temporal ou orçamento global de inferência/TTS. `app.ts:31`; `relay.ts:18`, `:24`, `:29`, `:35`; `execution.ts:19`; `operations.ts:23`. | Proteções de demo existentes, insuficientes para abertura a desconhecidos. |
+| Modo demonstrativo separado | Existe isolamento Rafael/Gustavo por cenário, não um sandbox por visitante. Saída das mensagens é enviada ao telefone configurado; painel possui estado único e ações administrativas. `index.ts:59`, `:66`, `:70`. | Abrir o mesmo sender/estado consumiria a demo principal; NO-GO. |
+
+Apenas remover a restrição de telefone não basta: o perfil e as referências continuariam sendo os do Gustavo, e respostas permaneceriam direcionadas ao telefone fixo. Assinatura Twilio autentica o webhook, não concede autorização corporativa ao participante.
+
+**Estimativa para implementação futura, um engenheiro:** piloto de poucos participantes previamente autorizados, aproximadamente **2–3 dias úteis (16–24 h)** para resolução de identidade, perfis e estado por participante, destinatário dinâmico, filas/locks independentes, allowlist com expiração, limite de consumo, respostas fora do escopo e testes reais de concorrência/continuidade/replay. Acesso aberto por QR Code, aproximadamente **4–7 dias úteis**, incluindo controles de abuso/consentimento/retenção, observabilidade e ensaio de carga. São estimativas técnicas, não recursos implementados ou consumo aprovado nesta rodada. Integração compartilhada do sender exigiria desenho de roteamento e autorização próprios; preferir uma configuração/experiência dedicada para preservar o apresentador. Para hoje, manter a jornada validada com o único telefone autorizado.
+
+
 ## Ensaio Gustavo com memória nativa e painel claro
 
 Esta é a evolução atual da demonstração. Rafael, EQ-DEMO-1002 e os arquivos de recuperação anteriores permanecem preservados. O cenário `gustavo-20261014-01` usa Memory Store, perfil e Orchestrator próprios, com Voice e WhatsApp associados à mesma identidade fictícia. Reutiliza Intelligence v3 dedicado sem modificar seus operadores. Nimo/ServiceNow continua simulado.
@@ -207,3 +252,13 @@ Configuração final escolhida: velocidade **1.06**, estabilidade **0.50**, simi
 ## Preparação da apresentação
 
 Auditoria, recomendação de integrações, APIs/permissões e roteiro: [PRESENTATION-AUDIT.md](PRESENTATION-AUDIT.md). Versão funcional preservada e restauração testada: [RECOVERY.md](RECOVERY.md). O relatório de auditoria atualiza a interpretação do vínculo Intelligence v3: GET por ID passou, embora a listagem esteja vazia.
+
+### Correção do ensaio de 14/10 — cenário Gustavo 02
+
+Falhas comprovadas: regras de confirmação/compatibilidade descartavam outras entidades na mesma frase; extração aceitava quantidade de kits, mas não “três microfones”; novos turnos substituíam o rascunho por campos incompletos. O painel mostrava processamento em andamento mesmo após erro terminal. A última nota falhou em `openai-stt`, depois do download; o código HTTP antigo não foi registrado e a causa específica do provedor permanece desconhecida. As respostas anteriores constam como entregues; nenhum pedido foi criado neste ensaio antes da correção.
+
+Correção localizada: extração e combinação de quantidade/item/local/compatibilidade; distinção explícita de microfones individuais e kits; pergunta somente por campos ausentes; confirmação e idempotência mantidas. O rascunho de workflow é persistido em `workflow-draft.json` dentro do cenário, identificado como armazenamento local de workflow, **não Conversation Memory**. Referências de pedidos confirmados continuam usando o adapter nativo existente. O ledger registra entidades e rascunho antes/depois das novas interações; erros terminais têm horário e código sanitizado. Falha de síntese mantém o fallback textual existente, sem exibir processamento indefinido.
+
+Validação local: 183 testes nativos, 51 testes da aplicação original, typecheck e build passaram. STT, TTS e APIs nativas são mockados nos testes automatizados; isso não constitui novo aceite de áudio real. GET local 200, painel público 401 sem autenticação e 200 autenticado, com TLS verificado. Gateway e ngrok mantiveram seus processos; somente o serviço nativo ocioso foi reiniciado. Cenário, ledger histórico, vozes, operadores e recursos nativos preservados. Nenhuma chamada ou mensagem foi disparada nesta correção.
+
+Evidências privadas: `.demo-data/<EXPECTED_TWILIO_ACCOUNT_SID>/scenarios/gustavo-20261014-02/failure-before-equipment-repair/` e `equipment-repair-validation.json`. Código/build anterior: `.demo-data/recovery/globo-before-equipment-repair-20261014.tar.gz`. Para rollback, pare somente o serviço nativo quando ocioso, restaure `native/` e `native-dist/` do arquivo nos respectivos caminhos (`native/` e `.demo-data/native-dist/`) e inicie `npm run start:native -w apps/globo`. Preserve ledgers e cenários; não restaure credenciais nem configurações remotas. O novo teste real depende de envio manual do participante.

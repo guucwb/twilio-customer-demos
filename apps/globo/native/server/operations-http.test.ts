@@ -19,3 +19,11 @@ describe('Operational panel and signed endpoints',()=>{
  it('rejects extra/free-text fields and arbitrary execution objects',async()=>{const f=await fixture();expect((await f.post('operation-step',{step:2,employee:'other'})).status).toBe(400);expect((await f.post('execution-event',{status:'completed',eventId:'x',requestId:'other'})).status).toBe(400);});
  it('requires signature and explicit WhatsApp resource authorization; v3 webhook is closed by default',async()=>{const f=await fixture();const body={AccountSid:account,MessageSid:'SM'+'0'.repeat(32),From:'whatsapp:+550000000001',To:'whatsapp:+550000000002'};expect((await request(f.app).post('/globo/native/whatsapp').type('form').send(body)).status).toBe(403);expect((await request(f.app).post('/globo/native/whatsapp').set('X-Twilio-Signature',twilio.getExpectedTwilioSignature(token,base+'/globo/native/whatsapp',body)).type('form').send(body)).status).toBe(403);expect((await request(f.app).post('/globo/native/intelligence/events').send({accountId:account})).status).toBe(403);});
 });
+
+it('analytics polling and manual refresh read existing results without executing a rule',async()=>{
+ const {vi}=await import('vitest');const s=await new HRSession(new LocalDemoMemory(),new MockNimoServiceNow()).init();
+ const collect=vi.fn(async()=>[]),onNativeRefresh=vi.fn(),onNativeRecords=vi.fn();const collector={collect,rejections:new Map()} as any;
+ const app=createApp({localPort:3009,voice:voiceConfig(dotenv.parse(readFileSync(new URL('../.env.example',import.meta.url)))),authToken:token,accountSid:account,publicBase:base,panelPassword:'test',allowedCalls:[],session:s,registry:new RelayRegistry(async()=>s),getSession:()=>s,setSession:()=>{},createSession:async()=>s,nativeCollector:collector,nativeConversationIds:['conv-test'],onNativeRefresh,onNativeRecords});
+ expect((await request(app).get('/api/globo/native/analytics').auth('demo','test')).status).toBe(200);expect(collect).toHaveBeenCalledOnce();await request(app).get('/api/globo/native/analytics').auth('demo','test');expect(collect).toHaveBeenCalledOnce();
+ expect((await request(app).post('/api/globo/native/native-analysis/refresh').auth('demo','test').set('Origin',base).set('X-Globo-Demo','1').send({conversationId:'conv-test'})).status).toBe(200);expect(collect).toHaveBeenCalledTimes(2);expect(onNativeRefresh).not.toHaveBeenCalled();
+});

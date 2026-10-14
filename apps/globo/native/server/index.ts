@@ -1,3 +1,4 @@
+import {callAnalysisConversations} from './call-analysis-discovery';
 import {NativeVacationMemory,normalizeGloTurn} from './vacation';
 import {GloSession} from './glo-session';
 import {createServer} from 'node:http';
@@ -26,13 +27,14 @@ const config=loadConfig();const api=new TargetAPI(config);await api.verifyAccoun
 if(!config.opStore||!config.opProfile||!config.native.conversationConfiguration)throw new Error('native-resources-not-ready');
 const nativeMemory=new NativeOperationalMemory({...config,storeId:config.opStore,profileId:config.opProfile,useApproved:true,writesApproved:true});
 const execution=await new MockEquipmentExecution(config.dataRoot+'execution.json',config.sceneId?{identity:'gustavo-demo',seedHistory:false,firstRequestNumber:2001}:undefined).init();
-const journey=await new OperationsJourney(execution,config.identity as 'rafael-demo'|'gustavo-demo',true,nativeMemory).recoverMemory();
+const journey=await new OperationsJourney(execution,config.identity as 'rafael-demo'|'gustavo-demo',true,nativeMemory,config.sceneId?config.dataRoot+'workflow-draft.json':undefined).recoverMemory();
+await journey.restoreDraft();
 const memory=new LocalDemoMemory(config.dataRoot+'hr-local.json');
 const provider=config.aiEnabled&&config.apiKey&&config.model?new OpenAIResponses({apiKey:config.apiKey,model:config.model}):undefined;
 let latestConversationId:string|undefined;
 const nativeConversationIds:string[]=[],liveConversationIds:string[]=[],callSids:string[]=[],knownCalls=new Set<string>();
 try{callSids.push(...JSON.parse(await readFile(config.dataRoot+'calls.json','utf8')));}catch{/* New isolated account namespace. */}
-for(const callSid of callSids){if(knownCalls.has(callSid))continue;const list=await api.request('conversations.twilio.com','/v2/Conversations?'+new URLSearchParams({channelId:callSid,pageSize:'100'}));for(const c of list.conversations??[]){if(c.accountId!==config.accountSid||c.configurationId!==config.nativeConversationConfigurationId)throw new Error('native-startup-scope-mismatch');if(!nativeConversationIds.includes(c.id)){nativeConversationIds.push(c.id);liveConversationIds.push(c.id);}knownCalls.add(callSid);if(callSid===callSids.at(-1))latestConversationId=c.id;}}
+for(const callSid of callSids){const list={conversations:await callAnalysisConversations(api,config.accountSid,config.nativeConversationConfigurationId,callSid)};for(const c of list.conversations??[]){if(!nativeConversationIds.includes(c.id)){nativeConversationIds.push(c.id);liveConversationIds.push(c.id);}knownCalls.add(callSid);if(callSid===callSids.at(-1))latestConversationId=c.id;}}
 try{const ids=JSON.parse(await readFile(config.dataRoot+'message-conversations.json','utf8'));for(const id of ids){if(!/^conv_conversation_[0-9a-z]{26}$/.test(id))throw new Error('invalid-message-conversation');const row=await api.request('conversations.twilio.com','/v2/Conversations/'+id);if(row.accountId!==config.accountSid||row.configurationId!==config.nativeConversationConfigurationId)throw new Error('message-conversation-scope');if(!nativeConversationIds.includes(id)){nativeConversationIds.push(id);liveConversationIds.push(id);}}}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}
 try{const id=JSON.parse(await readFile(config.dataRoot+'latest-conversation.json','utf8'));if(!nativeConversationIds.includes(id))throw new Error('latest-conversation-outside-scope');latestConversationId=id;}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}
 const nativeCollector=new NativeAnalysisCollector({...config,configurationId:config.nativeIntelligenceId,conversationConfigurationId:config.nativeConversationConfigurationId,allowedConversationIds:nativeConversationIds,liveConversationIds,operatorIds:config.nativeOperatorIds,approved:true});
@@ -58,7 +60,7 @@ const factory=async(mode:'demo'|'voice'='demo')=>{
 };
 let session=await factory();const registry=new RelayRegistry(()=>factory('voice'));
 const discover=async()=>{
- for(const callSid of callSids){if(knownCalls.has(callSid))continue;const list=await api.request('conversations.twilio.com','/v2/Conversations?'+new URLSearchParams({channelId:callSid,pageSize:'100'}));if(list.meta?.nextToken)throw new Error('native-discovery-pagination-needed');for(const c of list.conversations??[]){if(c.accountId!==config.accountSid||c.configurationId!==config.nativeConversationConfigurationId)throw new Error('native-discovery-scope-mismatch');if(!nativeConversationIds.includes(c.id)){nativeConversationIds.push(c.id);liveConversationIds.push(c.id);knownCalls.add(callSid);session.event('Conversa nativa correlacionada',`${callSid} → ${c.id}`,'twilio-voice');}knownCalls.add(callSid);if(callSid===callSids.at(-1)){latestConversationId=c.id;await writeFile(config.dataRoot+'latest-conversation.json',JSON.stringify(c.id),{mode:0o600});}}}
+ for(const callSid of callSids){const list={conversations:await callAnalysisConversations(api,config.accountSid,config.nativeConversationConfigurationId,callSid)};for(const c of list.conversations??[]){if(!nativeConversationIds.includes(c.id)){nativeConversationIds.push(c.id);liveConversationIds.push(c.id);knownCalls.add(callSid);session.event('Conversa nativa correlacionada',`${callSid} → ${c.id}`,'twilio-voice');}knownCalls.add(callSid);if(callSid===callSids.at(-1)){latestConversationId=c.id;await writeFile(config.dataRoot+'latest-conversation.json',JSON.stringify(c.id),{mode:0o600});}}}
 };
 const client=twilio(config.accountSid,config.authToken);
 let outgoingMedia:SignedAudioStore|undefined;try{outgoingMedia=await new SignedAudioStore({directory:config.dataRoot+'outgoing-audio',publicBase:config.publicBase,ttlSeconds:config.audioTts.ttlSeconds}).init();}catch{console.info('Outgoing audio media unavailable; text fallback preserves Calling.');}

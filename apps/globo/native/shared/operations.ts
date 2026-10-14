@@ -1,8 +1,8 @@
 export type OpKind='request'|'correction'|'compatible'|'confirm'|'move'|'choose'|'report'|'reopen'|'status'|'urgent'|'forbidden';
-export interface OpInput {kind:OpKind;completeKit?:boolean;location?:number;quantity?:number;deadlineMinutes?:number;recurrence?:boolean;requestId?:string;}
+export interface OpInput {kind:OpKind;equipment?:EquipmentRequest['equipment'];compatibility?:string;confirm?:boolean;completeKit?:boolean;location?:number;quantity?:number;deadlineMinutes?:number;recurrence?:boolean;requestId?:string;}
 export type Channel='panel'|'voice'|'whatsapp-text'|'whatsapp-audio';
 export type ExecutionStatus='registered'|'accepted'|'dispatched'|'completed'|'unknown';
-export interface EquipmentRequest {id:string;owner:'rafael-demo'|'gustavo-demo';type:'equipment-service-request';equipment:'kit de microfone sem fio';completeKit?:boolean;quantity:number;location:number;compatibility:string;deadlineText:string;status:ExecutionStatus;version:number;executor:string|null;eta:string|null;reportedOutcome:'unknown'|'unresolved'|'resolved';blocker?:string;recurrenceReported:boolean;}
+export interface EquipmentRequest {id:string;owner:'rafael-demo'|'gustavo-demo';type:'equipment-service-request';equipment:'kit de microfone sem fio'|'microfone';completeKit?:boolean;quantity:number;location:number;compatibility:string;deadlineText:string;status:ExecutionStatus;version:number;executor:string|null;eta:string|null;reportedOutcome:'unknown'|'unresolved'|'resolved';blocker?:string;recurrenceReported:boolean;}
 export interface ToolEvent {id:string;time:string;operation:string;requestId?:string;source:'adapter-simulated';confirmed:boolean;detail:string;}
 export interface OperationalSnapshot {identity:string;authentication:string;authorization:string;requests:EquipmentRequest[];active?:EquipmentRequest;draft?:Partial<EquipmentRequest>;pending?:'create'|'move'|'revise'|'reopen';impact:string;nextAction:string;events:ToolEvent[];channels:Channel[];memorySource:'local-reference'|'twilio-memory';memoryEvidence?:{profileId:string;retrievedAt:string;references:string[]};}
 export const operationSteps=[

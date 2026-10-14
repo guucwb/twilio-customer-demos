@@ -3,7 +3,7 @@ import {normalizeOperation} from './ops-normalize';
 import {OperationsJourney} from './operations';
 import {MockEquipmentExecution} from './execution';
 const variants=['Mudou para o estúdio cinco.','Agora é no Studio 5.','A gravação vai acontecer no estúdio número cinco.','Na verdade, trocaram para o estúdio 5.'];
-async function existing(){const adapter=await new MockEquipmentExecution().init(),journey=new OperationsJourney(adapter);await journey.execute({kind:'request',quantity:2,location:4,deadlineMinutes:30},'request');await journey.execute({kind:'compatible'},'compatible');await journey.execute({kind:'confirm'},'open');return {adapter,journey,row:(await journey.snapshot()).active!};}
+async function existing(){const adapter=await new MockEquipmentExecution().init(),journey=new OperationsJourney(adapter);await journey.execute({kind:'request',equipment:'kit de microfone sem fio',quantity:2,location:4,deadlineMinutes:30},'request');await journey.execute({kind:'compatible'},'compatible');await journey.execute({kind:'confirm'},'open');return {adapter,journey,row:(await journey.snapshot()).active!};}
 describe('Studio / estúdio entities and existing-request corrections',()=>{
  it.each(variants)('extracts move + numeric location from %s',text=>{expect(normalizeOperation(text)?.operation).toEqual({kind:'move',location:5});});
  it.each(['Studio 4','estúdio quatro','estúdio 4','estúdio número quatro'])('handles the other demo studio without a Studio 5 special case: %s',place=>{expect(normalizeOperation('Agora é no '+place)?.operation).toEqual({kind:'move',location:4});});

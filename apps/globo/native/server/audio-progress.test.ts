@@ -1,0 +1,5 @@
+import {it,expect} from 'vitest';
+import {audioProgress} from '../src/audio-progress';
+it('does not present a failed STT as ongoing transcription or processing',()=>{const view=audioProgress({status:'failed',stage:'openai-stt'});expect(view.transcript).toBe('Transcrição não concluída.');expect(view.reply).toContain('openai-stt');expect(JSON.stringify(view)).not.toMatch(/em andamento|Processando/);});
+it('does not present failed synthesis/send as ongoing processing and retains real transcript',()=>{const view=audioProgress({status:'failed',stage:'whatsapp-reply',transcript:'Três microfones no estúdio quatro.'});expect(view.transcript).toContain('Três');expect(view.reply).toContain('whatsapp-reply');expect(view.reply).not.toContain('Processando');});
+it('displays the delivered TTS text fallback rather than an endless spinner',()=>{const view=audioProgress({status:'completed',responseTurns:[{kind:'text',status:'delivered',text:'Não consegui gerar a nota de voz agora. Confirma o pedido?'}]});expect(view.reply).toContain('Não consegui gerar');expect(view.reply).not.toContain('Processando');});
