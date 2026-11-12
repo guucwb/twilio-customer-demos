@@ -1,0 +1,31 @@
+{
+  "name": "flash-analytics-poc",
+  "private": true,
+  "type": "module",
+  "description": "Flash Courier · Flash Analytics PoC — Flex plugin (mock) + authorization backend. Local only, no deploy.",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc -p analytics-backend/tsconfig.json && npm --prefix plugin-flash-analytics run typecheck",
+    "lint": "eslint .",
+    "build": "npm --prefix plugin-flash-analytics run build",
+    "check": "npm run lint && npm run typecheck && npm test && npm run build",
+    "preview": "esbuild plugin-flash-analytics/preview/main.tsx --bundle --minify --target=es2019 --outfile=plugin-flash-analytics/preview/dist/app.js --define:process.env.NODE_ENV=\\\"production\\\" && cp plugin-flash-analytics/preview/index.html plugin-flash-analytics/preview/dist/index.html",
+    "backend": "tsx --env-file=analytics-backend/.env analytics-backend/src/server.ts",
+    "demo:cross-tenant": "tsx --env-file=analytics-backend/.env analytics-backend/src/scripts/demoCrossTenant.ts",
+    "token": "tsx --env-file=analytics-backend/.env analytics-backend/src/scripts/mintDemoToken.ts",
+    "seed:demo": "tsx analytics-backend/src/scripts/seedDemoAccount.ts",
+    "seed:cleanup": "tsx analytics-backend/src/scripts/seedDemoAccount.ts --cleanup",
+    "serverless:build": "node serverless/build.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.0",
+    "@types/node": "^22.19.0",
+    "esbuild": "^0.28.2",
+    "eslint": "^9.39.0",
+    "globals": "^16.5.0",
+    "tsx": "^4.23.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.0",
+    "vitest": "^4.1.11"
+  }
+}

@@ -1,0 +1,26 @@
+FLASH COURIER — DEMO DE FLEX UNICO
+
+1) flash-conecta-demo.html
+   Protótipo web interativo que funciona offline, com dados fictícios.
+   Abra em um navegador (Safari/Chrome); não requer servidor, login ou Twilio CLI.
+   Se o iPad não executar JavaScript ao pré-visualizar em Arquivos, use
+   Compartilhar > Abrir no Safari, ou abra no navegador de um computador.
+
+2) PROMPT_CLAUDE_CODE.md
+   Instruções completas para pedir ao Claude Code um plugin TypeScript
+   para Twilio Flex UI 2.x, com mocks, filtros na Real-Time Queues View,
+   dashboard próprio, backend autorizado por banco e testes.
+   Não autoriza publicação em produção.
+
+ROTEIRO DE 2 MINUTOS:
+  a) Entre na tela Tempo real como Gestão Flash.
+  b) Troque o perfil para Supervisão Itaú e depois Santander.
+  c) Abra Agentes e filas para mostrar um Worker em múltiplas filas.
+  d) Abra Teste de acesso: modo A mostra segregação visual.
+  e) Modo B mostra, SOMENTE EM SIMULAÇÃO, como um backend negaria
+     acesso cruzado com HTTP 403.
+
+AVISO: métricas e bloqueios são simulados no frontend e não comprovam
+isolamento real da Twilio. Dados históricos do Insights não são uma
+fonte de eventos com latência de segundos. Para tempo real, use
+TaskRouter e/ou uma pipeline de eventos própria.

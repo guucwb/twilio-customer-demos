@@ -1,0 +1,8 @@
+node_modules/
+plugin-flash-analytics/build/
+plugin-flash-analytics/preview/dist/
+.env
+.env.*
+!.env.example
+analytics-backend/.env
+*.local.json

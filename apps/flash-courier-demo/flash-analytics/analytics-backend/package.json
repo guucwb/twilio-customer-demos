@@ -1,0 +1,7 @@
+{
+  "name": "flash-analytics-backend",
+  "private": true,
+  "type": "module",
+  "description": "Authorization-enforcing analytics API (Architecture B). Run from ../ with npm run backend.",
+  "engines": { "node": ">=20.6" }
+}

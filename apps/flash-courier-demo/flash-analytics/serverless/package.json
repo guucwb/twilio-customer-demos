@@ -1,0 +1,12 @@
+{
+  "name": "flash-analytics-serverless",
+  "private": true,
+  "description": "Twilio Functions deployment of the Flash Analytics authorization backend (bundled from ../analytics-backend).",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "@twilio/runtime-handler": "2.1.0"
+  },
+  "engines": { "node": "22" }
+}

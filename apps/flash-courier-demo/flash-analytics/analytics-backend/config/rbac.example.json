@@ -1,0 +1,42 @@
+{
+  "entries": [
+    {
+      "identity": "gestao@demo.flash.invalid",
+      "role": "flash_admin",
+      "banks": [
+        "itau",
+        "santander",
+        "caixa",
+        "c6_pip"
+      ]
+    },
+    {
+      "identity": "sup.itau@demo.flash.invalid",
+      "role": "bank_supervisor",
+      "banks": [
+        "itau"
+      ]
+    },
+    {
+      "identity": "sup.santander@demo.flash.invalid",
+      "role": "bank_supervisor",
+      "banks": [
+        "santander"
+      ]
+    },
+    {
+      "identity": "sup.caixa@demo.flash.invalid",
+      "role": "bank_supervisor",
+      "banks": [
+        "caixa"
+      ]
+    },
+    {
+      "identity": "sup.c6@demo.flash.invalid",
+      "role": "bank_supervisor",
+      "banks": [
+        "c6_pip"
+      ]
+    }
+  ]
+}

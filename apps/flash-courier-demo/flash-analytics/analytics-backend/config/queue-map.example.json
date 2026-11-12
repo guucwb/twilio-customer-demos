@@ -1,0 +1,68 @@
+{
+  "queues": [
+    {
+      "key": "CX_ITAU",
+      "sid": "WQ00000000000000000000000000000000",
+      "bankId": "itau",
+      "tower": "CX",
+      "label": "CX · Itaú",
+      "targetWorkers": "routing.banks HAS \"itau\" AND routing.towers HAS \"CX\""
+    },
+    {
+      "key": "CQ_ITAU",
+      "sid": "WQ00000000000000000000000000000000",
+      "bankId": "itau",
+      "tower": "CQ",
+      "label": "CQ · Itaú",
+      "targetWorkers": "routing.banks HAS \"itau\" AND routing.towers HAS \"CQ\""
+    },
+    {
+      "key": "CX_SANTANDER",
+      "sid": "WQ00000000000000000000000000000000",
+      "bankId": "santander",
+      "tower": "CX",
+      "label": "CX · Santander",
+      "targetWorkers": "routing.banks HAS \"santander\" AND routing.towers HAS \"CX\""
+    },
+    {
+      "key": "CQ_SANTANDER",
+      "sid": "WQ00000000000000000000000000000000",
+      "bankId": "santander",
+      "tower": "CQ",
+      "label": "CQ · Santander",
+      "targetWorkers": "routing.banks HAS \"santander\" AND routing.towers HAS \"CQ\""
+    },
+    {
+      "key": "CX_CAIXA",
+      "sid": "WQ00000000000000000000000000000000",
+      "bankId": "caixa",
+      "tower": "CX",
+      "label": "CX · Caixa",
+      "targetWorkers": "routing.banks HAS \"caixa\" AND routing.towers HAS \"CX\""
+    },
+    {
+      "key": "CQ_CAIXA",
+      "sid": "WQ00000000000000000000000000000000",
+      "bankId": "caixa",
+      "tower": "CQ",
+      "label": "CQ · Caixa",
+      "targetWorkers": "routing.banks HAS \"caixa\" AND routing.towers HAS \"CQ\""
+    },
+    {
+      "key": "CX_C6_PIP",
+      "sid": "WQ00000000000000000000000000000000",
+      "bankId": "c6_pip",
+      "tower": "CX",
+      "label": "CX · C6 / PIP",
+      "targetWorkers": "routing.banks HAS \"c6_pip\" AND routing.towers HAS \"CX\""
+    },
+    {
+      "key": "CQ_C6_PIP",
+      "sid": "WQ00000000000000000000000000000000",
+      "bankId": "c6_pip",
+      "tower": "CQ",
+      "label": "CQ · C6 / PIP",
+      "targetWorkers": "routing.banks HAS \"c6_pip\" AND routing.towers HAS \"CQ\""
+    }
+  ]
+}
